@@ -57,6 +57,10 @@ The default
 
 ### Turning the results to a graph
 
+#### Ignoring the anti-correlation
+
+The goal of the analysis is to find collection of genes that behave similarly,
+
 To be able to combine the different omics layers, we need to convert each data
 to a non-parametric space. In other words, we need to find a way to remove the 
 "memory" of the measuring process of each data type. To that end we perform a 

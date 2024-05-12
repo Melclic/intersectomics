@@ -1,5 +1,41 @@
 from math import factorial
 import pandas as pd
+import networkx as nx
+from typing import Union
+
+
+def remove_G_pair_isolates(G_in: Union[nx.Graph, nx.DiGraph]) -> Union[nx.Graph, nx.DiGraph]:
+    """
+    Remove nodes that are connected only to one another and isolate nodes from a graph.
+
+    Args:
+        G_in (Union[nx.Graph, nx.DiGraph]): Input graph from which nodes will be removed.
+
+    Returns:
+        Union[nx.Graph, nx.DiGraph]: A copy of the input graph with specified nodes removed.
+
+    Raises:
+        None
+    """
+    G = G_in.copy()
+    to_remove = []
+
+    for node in G.nodes():
+        if node not in to_remove:
+            neighbors = list(G.neighbors(node))
+            if len(neighbors) == 0:
+                to_remove.append(node)
+            elif len(neighbors) == 1:
+                neighbors_of_neighbor = list(G.neighbors(neighbors[0]))
+                if len(neighbors_of_neighbor) == 1 and neighbors_of_neighbor[0] == node:
+                    to_remove.append(node)
+                    to_remove.append(neighbors[0])
+
+    G.remove_nodes_from(to_remove)
+    G.remove_nodes_from(list(nx.isolates(G)))  # Remove isolated nodes
+
+    return G
+
 
 def combinations_count(n: int, r: int) -> int:
     """
