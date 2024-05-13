@@ -61,7 +61,16 @@ TODO
 
 #### Ignoring the anti-correlation
 
-The goal of the analysis is to find collection of genes that behave similarly,
+The goal of the analysis is to find collection of genes that behave similarly. 
+When constructing the graph, if you use anticorrelations then you would not get 
+the results you expect. Below is an example of the plot of anticorrelations graph.
+The first plot is anticorrelated to the second. The second is anticorrelated to the 
+third, but the first is correlated to the third. This means as a graph it would not be 
+useful.
+
+
+![anticorrelation_mistake](https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd)
+
 
 To be able to combine the different omics layers, we need to convert each data
 to a non-parametric space. In other words, we need to find a way to remove the 
