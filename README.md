@@ -1,23 +1,19 @@
 # IntersectOmics
 Method to study multi-omics datasets, measured with replicates and find those 
-that have similar patterns of behaviors.
+that have similar patterns of expression over time or different measuring 
+types.
 
 ## Multi-omics data
 
 We will use a dataset from the [following paper](https://www.sciencedirect.com/science/article/pii/S0048969723003558), 
-that measured transcriptomics and proteomics of an earth worm  over several days after exposure to an insecticide.
+that measured transcriptomics and proteomics of springtail earth worm over several days after exposure to an insecticide.
 
-#paste an example picture of the data
-
-This time series data contains all the elements we need. It is multi-omics and has replicates
+The time series data has multiple omics layers and has three replicates
 for each time point. Note that the data needs to be in the form of a table, where the index
 of the table are the names of the genes/protein/metabolite and the columns represents
-the metadata associated with the sample. We have a helper function that can combine
-the two:
+the metadata associated with the sample. 
 
-python```
-#shoe the example code
-```
+The data 
 
 ### Correlation with replicates
 
@@ -36,22 +32,28 @@ vectors that contain known replicates. The process may be summarized as follows:
 4) Take the mean of the correlations and combine the p-values correcting for multiple
 tesing
 
-The reported p-value is combined using the pearson method. See the scipy documentation for combined_pvalues.
+The reported p-value is combined using the pearson method. See the scipy documentation for `combined_pvalues`.
 
 TODO: As of now, we use a normal distribution, but more appropriate distributions
 should be used depending on the data type. For example, RNA-seq should use Poisson
 distribution instead. To that end, we should run R packages to process the data and
 extract better distribution parameters
 
-Below are the supported correlationtyps
+Below are the supported correlation types:
 
 #### Spearman
 
-The default 
+The default. This works very well when parameters have curvilinear relationship.
+In our example dataset that is time series, an increase could mean a decrease in 
+another.
 
 #### Pearson
 
+TODO
+
 #### Euclidian
+
+TODO
 
 #### 
 
@@ -87,6 +89,7 @@ closeness between the two.
 ## Inspiration
 
 The idea of this method is to convert multiple data types to a non-parametric space
-and perform an intersection study between the two. 
-
-##
+and perform an intersection study has been inspired by [Nikolay Oskolkov](https://github.com/NikolayOskolkov)
+and the following [github](https://github.com/NikolayOskolkov/UMAPDataIntegration).
+The added features are limitations I have found when implementing the method with
+different types of data.
