@@ -19,8 +19,9 @@ for each time point. Note that the data needs to be in the form of a table, wher
 of the table are the names of the genes/protein/metabolite (biomolecule) and the columns represents
 the metadata associated with the sample.  
 
-<img width="200" alt="example_input_data" src="https://github.com/Melclic/intersectomics/assets/4260862/5265380e-c6e9-4969-babb-cbd9dc882832">
-
+<p align="center">
+  <img width="500" alt="example_input_data" src="https://github.com/Melclic/intersectomics/assets/4260862/5265380e-c6e9-4969-babb-cbd9dc882832">
+</p>
 
 ### Correlation with replicates
 
@@ -71,7 +72,7 @@ protemics graph. Each node is either a gene or a protein and each edge represent
 the correlation score.
 
 <p align="center">
-  <img width="200" alt="protein_spearman_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/29b31e32-a2e6-4feb-a2ef-cad67ac219a8">
+  <img width="800" alt="protein_spearman_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/29b31e32-a2e6-4feb-a2ef-cad67ac219a8">
 </p>
 
 #### Ignoring the anti-correlation
@@ -84,11 +85,11 @@ a small example of three biomolecules that are anticorrelated to each other. By 
 of the 
 
 <p align="center">
-  <img width="200" alt="anticorrelation_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/a4f0e411-d01b-4f86-a36e-118755195180">
+  <img width="400" alt="anticorrelation_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/a4f0e411-d01b-4f86-a36e-118755195180">
 </p>
 
 <p align="center">
-  <img width="200" alt="anticorrelation_mistake" src="https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd">
+  <img width="500" alt="anticorrelation_mistake" src="https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd">
 </p>
 
 ### Graph intersection
@@ -100,7 +101,7 @@ and must have the same names. If not, the result will be orphan nodes that will 
 from the resulting graph.
 
 <p align="center">
-  <img width="200" alt="graph_intersection" src="https://mathworld.wolfram.com/images/eps-svg/GraphIntersection_800.svg">
+  <img width="700" alt="graph_intersection" src="https://mathworld.wolfram.com/images/eps-svg/GraphIntersection_800.svg">
 </p>
 
 ### Community Analysis
@@ -114,7 +115,7 @@ connected. We use the correlation metric of our choice as a numerical value of
 closeness between the two. 
 
 <p align="center">
-  <img width="500" alt="G_inter_example" src="https://github.com/Melclic/intersectomics/assets/4260862/27fab3fd-fd73-4ce9-9f7b-010d399ffc55">
+  <img width="800" alt="G_inter_example" src="https://github.com/Melclic/intersectomics/assets/4260862/27fab3fd-fd73-4ce9-9f7b-010d399ffc55">
 </p>
 
 ### Result
@@ -124,7 +125,7 @@ they behave the same. Note that in the example below, the protein and genes beha
 time, but this is not always the case. Here is an example of a single community in the above graph.
 
 <p align="center">
-  <img width="200" alt="result" src="https://github.com/Melclic/intersectomics/assets/4260862/1495f700-da58-4d75-8347-1d43ba1d10bd">
+  <img width="500" alt="result" src="https://github.com/Melclic/intersectomics/assets/4260862/1495f700-da58-4d75-8347-1d43ba1d10bd">
 </p>
 
 ## Inspiration
