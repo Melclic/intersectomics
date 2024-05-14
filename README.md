@@ -1,7 +1,13 @@
 # IntersectOmics
-Method to study multi-omics datasets, measured with replicates and find those 
-that have similar patterns of expression over time or different measuring 
-types.
+Method to analyze multi-omics datasets time series (or multiple condition) and uncover 
+similarly behaving groups of biomoelcules.
+
+To be able to combine the different omics layers, we need to convert each data
+to a non-parametric space. In other words, we need to find a way to remove the 
+"memory" of the measuring process of each data type. To that end we perform a 
+pairwise comparison between each pair of each data type and then construct a graph.
+We use the metric of similarity as an edge value and then perform community analysis
+using the weights to find cluster of biomolecules that have similar behaviors. 
 
 ## Multi-omics data
 
@@ -10,19 +16,19 @@ that measured transcriptomics and proteomics of springtail earth worm over sever
 
 The time series data has multiple omics layers and has three replicates
 for each time point. Note that the data needs to be in the form of a table, where the index
-of the table are the names of the genes/protein/metabolite and the columns represents
-the metadata associated with the sample. 
+of the table are the names of the genes/protein/metabolite (biomolecule) and the columns represents
+the metadata associated with the sample.  
 
-The data 
+<img width="200" alt="example_input_data" src="https://github.com/Melclic/intersectomics/assets/4260862/5265380e-c6e9-4969-babb-cbd9dc882832">
+
 
 ### Correlation with replicates
 
 When performing correlation analysis with replicates you are forced to take the
-mean of the samples. Doing so looses information regarding the variability of the
-sample and may lead to false negative results when performing correlation analysis.
-We propose a method that is more robust but more computationally intensive.
-
-#show an example
+mean of the samples. By doing so, you loose information regarding the variability of the
+sample. This may lead to false negative results when performing correlation analysis.
+We propose a method that is more robust but more computationally intensive by bootstrapping
+random variables extracted from fitted distributions for each replicate.
 
 To this end, this package enables the user to perform bootstrap analysis on two
 vectors that contain known replicates. The process may be summarized as follows:
@@ -45,7 +51,7 @@ Below are the supported correlation types:
 
 The default. This works very well when parameters have curvilinear relationship.
 In our example dataset that is time series, an increase could mean a decrease in 
-another.
+another. Spearman correlation is the most appropriate method.
 
 #### Pearson
 
@@ -59,31 +65,43 @@ TODO
 
 ### Turning the results to a graph
 
+The graph represents the pairwise similaritly between each biomolecule for each 
+omics layer. For example, in the example we have a transcriptomics graph and a 
+protemics graph. Each node is either a gene or a protein and each edge represents 
+the correlation score.
+
+<p align="center">
+  <img width="200" alt="protein_spearman_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/29b31e32-a2e6-4feb-a2ef-cad67ac219a8">
+</p>
+
 #### Ignoring the anti-correlation
 
 The goal of the analysis is to find collection of genes that behave similarly. 
-When constructing the graph, if you use anticorrelations then you would not get 
-the results you expect. Below is an example of the plot of anticorrelations graph.
-The first plot is anticorrelated to the second. The second is anticorrelated to the 
-third, but the first is correlated to the third. This means as a graph it would not be 
-useful.
+If anticorrelations and correlations are used to contruct the graph, you would get
+local subgrpahs that are highly connected between biomolecules, but you would not be 
+able to distinguish between those that behave similarly and those that do not. Below is 
+a small example of three biomolecules that are anticorrelated to each other. By nature
+of the 
 
+<p align="center">
+  <img width="200" alt="anticorrelation_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/a4f0e411-d01b-4f86-a36e-118755195180">
+</p>
 
-![anticorrelation_mistake](https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd)
-
-
-To be able to combine the different omics layers, we need to convert each data
-to a non-parametric space. In other words, we need to find a way to remove the 
-"memory" of the measuring process of each data type. To that end we perform a 
-pairwise comparison between each pair of each data type and then construct a graph.
-We use the metric of similarity as an edge value.
+<p align="center">
+  <img width="200" alt="anticorrelation_mistake" src="https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd">
+</p>
 
 ### Graph intersection
 
 Now that we have multiple graphs for each omics layer, we combine them by taking
-the interection between the them. This means that we keep only an edge if it exists
-in all of the graphs. Note that the nodes also need to be present in each of the graphs.
-If not, the result will be orphan nodes that will be removed from the resulting graph.
+the interection between each graph. This means that we keep only an edge if it exists
+in all of the graphs. Note that the nodes also need to be present in each of the graphs
+and must have the same names. If not, the result will be orphan nodes that will be removed 
+from the resulting graph.
+
+<p align="center">
+  <img width="200" alt="graph_intersection" src="https://mathworld.wolfram.com/images/eps-svg/GraphIntersection_800.svg">
+</p>
 
 ### Community Analysis
 
@@ -95,10 +113,24 @@ To that end we use community analysis to detect groups of nodes that are well
 connected. We use the correlation metric of our choice as a numerical value of 
 closeness between the two. 
 
+<p align="center">
+  <img width="500" alt="G_inter_example" src="https://github.com/Melclic/intersectomics/assets/4260862/27fab3fd-fd73-4ce9-9f7b-010d399ffc55">
+</p>
+
+### Result
+
+The result are collection of proteins, genes, and metabolites that are grouped together because 
+they behave the same. Note that in the example below, the protein and genes behave the same over 
+time, but this is not always the case. Here is an example of a single community in the above graph.
+
+<p align="center">
+  <img width="200" alt="result" src="https://github.com/Melclic/intersectomics/assets/4260862/1495f700-da58-4d75-8347-1d43ba1d10bd">
+</p>
+
 ## Inspiration
 
-The idea of this method is to convert multiple data types to a non-parametric space
+The idea to convert multiple data types to a non-parametric space
 and perform an intersection study has been inspired by [Nikolay Oskolkov](https://github.com/NikolayOskolkov)
 and the following [github](https://github.com/NikolayOskolkov/UMAPDataIntegration).
 The added features are limitations I have found when implementing the method with
-different types of data.
+time series data with replicates.
