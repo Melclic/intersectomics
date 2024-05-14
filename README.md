@@ -31,9 +31,13 @@ sample. This may lead to false negative results when performing correlation anal
 We propose a method that is more robust but more computationally intensive by bootstrapping
 random variables extracted from fitted distributions for each replicate.
 
+<p align="center">
+  <img width="500" alt="example_bootstrap" src="https://github.com/Melclic/intersectomics/assets/4260862/68140855-ad3c-43a2-ba5d-ad0643e8169b">
+</p>
+
 To this end, this package enables the user to perform bootstrap analysis on two
 vectors that contain known replicates. The process may be summarized as follows:
-1) Given two vectors with replicates, fit a normal distribution at each time points
+1) Given two vectors with replicates, fit a normal distribution at each time points (see plot above)
 2) Loop n times and each time, sample a single value at each timepoint
 3) Calculate the  correlation between the two
 4) Take the mean of the correlations and combine the p-values correcting for multiple
