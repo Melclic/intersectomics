@@ -23,7 +23,7 @@ the metadata associated with the sample.
   <img width="400" alt="example_input_data" src="https://github.com/Melclic/intersectomics/assets/4260862/5265380e-c6e9-4969-babb-cbd9dc882832">
 </p>
 
-### Correlation with replicates
+### Correlation with Replicates
 
 When performing correlation analysis with replicates you are forced to take the
 mean of the samples. By doing so, you loose information regarding the variability of the
@@ -32,7 +32,7 @@ We propose a method that is more robust but more computationally intensive by bo
 random variables extracted from fitted distributions for each replicate.
 
 <p align="center">
-  <img width="500" alt="example_bootstrap" src="https://github.com/Melclic/intersectomics/assets/4260862/68140855-ad3c-43a2-ba5d-ad0643e8169b">
+  <img width="700" alt="example_bootstrap" src="https://github.com/Melclic/intersectomics/assets/4260862/68140855-ad3c-43a2-ba5d-ad0643e8169b">
 </p>
 
 To this end, this package enables the user to perform bootstrap analysis on two
@@ -68,7 +68,7 @@ TODO
 
 #### 
 
-### Turning the results to a graph
+### Turning the Results to a Graph
 
 The graph represents the pairwise similaritly between each biomolecule for each 
 omics layer. For example, in the example we have a transcriptomics graph and a 
@@ -79,7 +79,7 @@ the correlation score.
   <img width="800" alt="protein_spearman_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/29b31e32-a2e6-4feb-a2ef-cad67ac219a8">
 </p>
 
-#### Ignoring the anti-correlation
+#### Ignoring the Anti-Correlation
 
 The goal of the analysis is to find collection of genes that behave similarly. 
 If anticorrelations and correlations are used to contruct the graph, you would get
@@ -96,7 +96,7 @@ of the
   <img width="500" alt="anticorrelation_mistake" src="https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd">
 </p>
 
-### Graph intersection
+### Graph Intersection
 
 Now that we have multiple graphs for each omics layer, we combine them by taking
 the interection between each graph. This means that we keep only an edge if it exists
