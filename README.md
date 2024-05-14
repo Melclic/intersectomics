@@ -20,7 +20,7 @@ of the table are the names of the genes/protein/metabolite (biomolecule) and the
 the metadata associated with the sample.  
 
 <p align="center">
-  <img width="500" alt="example_input_data" src="https://github.com/Melclic/intersectomics/assets/4260862/5265380e-c6e9-4969-babb-cbd9dc882832">
+  <img width="400" alt="example_input_data" src="https://github.com/Melclic/intersectomics/assets/4260862/5265380e-c6e9-4969-babb-cbd9dc882832">
 </p>
 
 ### Correlation with replicates
@@ -101,7 +101,7 @@ and must have the same names. If not, the result will be orphan nodes that will 
 from the resulting graph.
 
 <p align="center">
-  <img width="700" alt="graph_intersection" src="https://mathworld.wolfram.com/images/eps-svg/GraphIntersection_800.svg">
+  <img width="500" alt="graph_intersection" src="https://mathworld.wolfram.com/images/eps-svg/GraphIntersection_800.svg">
 </p>
 
 ### Community Analysis
