@@ -9,6 +9,14 @@ pairwise comparison between each pair of each data type and then construct a gra
 We use the metric of similarity as an edge value and then perform community analysis
 using the weights to find cluster of biomolecules that have similar behaviors. 
 
+## Install
+
+After cloning the project, cd to the project folder and install the following
+
+```
+pip install -e .
+```
+
 ## Multi-omics data
 
 We will use a dataset from the [following paper](https://www.sciencedirect.com/science/article/pii/S0048969723003558), 

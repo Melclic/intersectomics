@@ -2,7 +2,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 from typing import List, Tuple, Dict, Union
-
+from matplotlib import cm
 
 def remove_G_pair_isolates(G_in: Union[nx.Graph, nx.DiGraph]) -> Union[nx.Graph, nx.DiGraph]:
     """
