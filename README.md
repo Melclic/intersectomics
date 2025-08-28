@@ -1,8 +1,10 @@
 # IntersectOmics
 
-**IntersectOmics** is a computational framework for analyzing multi-omics datasets with time series or multiple conditions. It identifies **concordant** biomolecules—those that behave similarly across different omics layers (e.g., transcriptomics, proteomics, metabolomics)—using correlation, graph theory, and community detection.
+**IntersectOmics** is a computational framework for analyzing multi-omics datasets with time series or multiple conditions. It identifies biomolecules (e.g., genes, proteins, metabolites) that behave in a **coordinated** manner—either **concordantly** (similar direction) or **discordantly** (opposite direction)—across different omics layers, using correlation, graph theory, and community detection.
 
-This tool is ideal for detecting groups of genes, proteins, and metabolites that respond in a coordinated manner across different biological layers and time points. While future updates may support **discordant** relationships (opposite behaviors across layers), this version focuses **only on concordant biomolecules**.
+This tool is ideal for uncovering complex biological patterns across layers and conditions. The interpretation of whether clusters represent concordant or discordant behavior is **left to the user**, based on downstream inspection or visualization.
+
+> **TODO:** Add support for automatic detection and labeling of concordant vs. discordant biomolecule relationships across omics layers along with biological explanation as detailed (here)[https://substack.com/history/post/157552707]
 
 ---
 
@@ -18,19 +20,16 @@ pip install -e .
 
 ## Supported Dataset
 
-IntersectOmics supports multi-omics datasets with any number of replicates and experimental conditions. Each omics layer (transcriptomics, proteomics, metabolomics, etc.) should be provided as a separate table.
+IntersectOmics supports multi-omics datasets with any number of replicates and experimental conditions. Each omics layer (transcriptomics, proteomics, metabolomics, etc.) should be provided as a separate table. To ensure consistency between the metadata and data, the program requires columns that are multiindex. 
 
 ### Input Data Structure
 
 Each input dataset should be structured as follows:
 
 - **Rows**: Unique biomolecule identifiers (e.g., gene/protein/metabolite names)
-- **Columns**: Sample measurements, ideally grouped by condition and replicate
+- **Columns**: Sample measurements, ideally grouped by condition and replicate as multiindex
 
-### Accepted Formats
-
-- **Flat columns** (e.g., `Day1_Rep1`, `Day2_Rep3`, etc.)
-- **Multi-index columns**, where hierarchical levels (e.g., timepoint, replicate) are stored in tuples (e.g., `("Day1", "Rep1")`)
+You need at least two different omics layers.
 
 ### Requirements
 
@@ -38,15 +37,9 @@ Each input dataset should be structured as follows:
 - Replicates must be distinguishable by naming convention or metadata.
 - Handle missing values appropriately before using the tool.
 
-### Example Table
+---
 
-| Biomolecule | Day1_Rep1 | Day1_Rep2 | Day1_Rep3 | Day2_Rep1 | Day2_Rep2 | Day2_Rep3 |
-|-------------|-----------|-----------|-----------|-----------|-----------|-----------|
-| GeneA       | 1.2       | 1.3       | 1.1       | 1.5       | 1.4       | 1.6       |
-| GeneB       | 0.5       | 0.4       | 0.6       | 0.3       | 0.2       | 0.4       |
-| GeneC       | 2.1       | 2.2       | 2.0       | 1.9       | 1.8       | 2.0       |
-
-### Real Dataset Example
+## Example Dataset
 
 We use a dataset from [this publication](https://www.sciencedirect.com/science/article/pii/S0048969723003558), which measured transcriptomics and proteomics in springtail earthworms over time after insecticide exposure.
 
@@ -58,7 +51,7 @@ We use a dataset from [this publication](https://www.sciencedirect.com/science/a
 
 ## Correlation with Replicates
 
-Standard correlation methods often require averaging across replicates, discarding important information about variability. IntersectOmics instead fits a distribution to each condition and draws bootstrap samples to estimate correlations more robustly.
+Rather than averaging replicates—which can lose valuable variance information—IntersectOmics fits a distribution for each condition and bootstraps correlation values by sampling from these distributions.
 
 <p align="center">
   <img width="700" alt="example_bootstrap" src="https://github.com/Melclic/intersectomics/assets/4260862/68140855-ad3c-43a2-ba5d-ad0643e8169b">
@@ -67,18 +60,18 @@ Standard correlation methods often require averaging across replicates, discardi
 ### Bootstrap Workflow
 
 1. Fit a normal distribution at each time point using replicate values.
-2. Sample one value per time point from the fitted distribution.
+2. Sample one value per time point from the fitted distribution and perform correlation computation
 3. Repeat this sampling process *n* times to compute a distribution of correlation values.
 4. Average these correlations.
 5. Combine p-values using the Pearson method (`scipy.stats.combine_pvalues`).
 
-> Note: While a normal distribution is currently used, future versions may include data-type-specific distributions (e.g., Poisson for RNA-seq).
+> Note: While a normal distribution is currently used, future versions may support data-type-specific distributions (e.g., Poisson for RNA-seq).
 
 ---
 
 ## Supported Correlation Metrics
 
-- **Spearman** (default): Ideal for rank-based, monotonic trends, especially in time series.
+- **Spearman** (default): Rank-based, ideal for monotonic or curvilinear trends
 - **Pearson**: *TODO*
 - **Euclidean Distance**: *TODO*
 
@@ -86,13 +79,13 @@ Standard correlation methods often require averaging across replicates, discardi
 
 ## Graph Construction
 
-For each omics layer, a graph is created:
+A graph is constructed for each omics layer. Note that by default any correlations that have a significance <=0.05 is ignore, but that threshold can be modified by the user:
 
 - **Nodes**: Biomolecules
-- **Edges**: Similarity score (correlation) between biomolecules
-- **Weights**: Mean correlation across bootstrap iterations
+- **Edges**: Pairwise similarity scores between biomolecules
+- **Weights**: Averaged correlation scores (from bootstrapped sampling)
 
-Only **concordant** edges (positive correlations) are retained in the graph.
+Edges can reflect both **positive (concordant)** and **negative (discordant)** relationships.
 
 <p align="center">
   <img width="800" alt="protein_spearman_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/29b31e32-a2e6-4feb-a2ef-cad67ac219a8">
@@ -100,28 +93,14 @@ Only **concordant** edges (positive correlations) are retained in the graph.
 
 ---
 
-### Why We Ignore Discordant Edges
-
-The current goal is to detect concordant biomolecules—those showing similar directional changes across omics layers. Including discordant edges (e.g., negative correlations) can lead to misleading results and incorrect community grouping.
-
-<p align="center">
-  <img width="400" alt="anticorrelation_graph" src="https://github.com/Melclic/intersectomics/assets/4260862/a4f0e411-d01b-4f86-a36e-118755195180">
-</p>
-
-<p align="center">
-  <img width="500" alt="anticorrelation_mistake" src="https://github.com/Melclic/intersectomics/assets/4260862/19f93788-4426-4bad-af7f-dc9c4d0b06fd">
-</p>
-
----
-
 ## Graph Intersection
 
-We create one graph per omics layer, then compute the **intersection**:
+Once a graph is built for each omics layer, their **intersection** is computed:
 
-- **Nodes**: Must exist in all graphs (matched by name)
-- **Edges**: Retained only if present in all omics-specific graphs
+- **Nodes**: Must exist in all graphs
+- **Edges**: Retained only if present in all graphs
 
-The result is a unified graph of biomolecules that are **concordantly** related in every omics layer.
+This ensures only biomolecule relationships that are consistent across all omics layers are preserved, regardless of the direction of the correlation.
 
 <p align="center">
   <img width="500" alt="graph_intersection" src="https://mathworld.wolfram.com/images/eps-svg/GraphIntersection_800.svg">
@@ -131,11 +110,12 @@ The result is a unified graph of biomolecules that are **concordantly** related 
 
 ## Community Detection
 
-We apply community detection to the intersected graph to identify clusters of biomolecules with shared behavior.
+Community detection is performed on the intersected graph:
 
-- These clusters represent **concordant groups**
-- Edges are weighted by correlation strength
-- Each community may contain genes, proteins, and metabolites
+- Identifies clusters of biomolecules that are similarly related across layers
+- Uses edge weights (correlation) as a measure of connectivity
+
+> **Important:** Communities may include biomolecules that are concordantly or discordantly related between omics layers. **It is the user’s responsibility to inspect each community** (e.g., via visualization or trend comparison) to interpret the biological meaning.
 
 <p align="center">
   <img width="800" alt="G_inter_example" src="https://github.com/Melclic/intersectomics/assets/4260862/27fab3fd-fd73-4ce9-9f7b-010d399ffc55">
@@ -145,21 +125,32 @@ We apply community detection to the intersected graph to identify clusters of bi
 
 ## Final Results
 
-The result is a set of **concordant communities**—biomolecules across different omics layers that behave similarly over time or conditions.
+Each community represents a group of biomolecules with shared trends across layers. These may be:
+
+- **Concordant**: Biomolecules change in the same direction
+- **Discordant**: Biomolecules show opposing trends
 
 <p align="center">
   <img width="500" alt="result" src="https://github.com/Melclic/intersectomics/assets/4260862/1495f700-da58-4d75-8347-1d43ba1d10bd">
 </p>
 
-> **Note:** Detection of **discordant** communities (e.g., genes increasing while proteins decrease) is not currently supported, but is planned for future versions.
+Use visualization tools to evaluate and annotate the nature of each cluster.
+
+---
+
+## Notebooks
+
+A complete example demonstrating the full pipeline, including data loading, correlation, graph construction, and visualization, can be found at:
+
+`notebooks/run_example.ipynb`
 
 ---
 
 ## Inspiration
 
-IntersectOmics is inspired by the work of [Nikolay Oskolkov](https://github.com/NikolayOskolkov) on [UMAPDataIntegration](https://github.com/NikolayOskolkov/UMAPDataIntegration), with key extensions for:
+IntersectOmics is inspired by [Nikolay Oskolkov](https://github.com/NikolayOskolkov)’s [UMAPDataIntegration](https://github.com/NikolayOskolkov/UMAPDataIntegration), with major additions including:
 
-- Time series data
-- Replicate-aware correlation
-- Graph intersection
-- Concordant community analysis
+- Support for time series data
+- Bootstrap-based correlation with replicates
+- Cross-layer graph intersection
+- Discovery of both concordant and discordant multi-omics communities
