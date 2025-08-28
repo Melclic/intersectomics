@@ -131,12 +131,17 @@ Each community represents a group of biomolecules with shared trends across laye
 - **Discordant**: Biomolecules show opposing trends
 
 <p align="center">
-  <img width="500" alt="result" src="https://github.com/Melclic/intersectomics/assets/4260862/1495f700-da58-4d75-8347-1d43ba1d10bd">
+  <img width="500" alt="concordant_results" src="https://github.com/user-attachments/assets/fbafb051-2357-4bf2-a868-53830137cb7b" />
+</p>
+
+<p align="center">
+  <img width="500" alt="discordant_results" src="https://github.com/user-attachments/assets/2ab6db9d-d28c-4d97-839d-6c33e7b0a384" />
 </p>
 
 Use visualization tools to evaluate and annotate the nature of each cluster.
 
----
+--- 
+
 
 ## Notebooks
 
